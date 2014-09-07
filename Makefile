@@ -30,5 +30,3 @@ stop:
 clean:
 	@echo "$@ $(IMG_TAG)"
 	@docker rmi $(IMG_TAG)
-
-
