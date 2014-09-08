@@ -4,18 +4,18 @@ Une image docker de l'application web [Youtrack](http://www.jetbrains.com/youtra
 
 ## Docker Hub Registry
 
-Le repo Docker [sebmartin/youtrack-dockerized](https://registry.hub.docker.com/u/sebmartin/youtrack-dockerized) est paramétré pour construire automatiquement l'image Docker à partir du repo GitHub [seb-martin/youtrack-dockerized](https://github.com/seb-martin/youtrack-dockerized).
+Le repo Docker [sebmartin/youtrack](https://registry.hub.docker.com/u/sebmartin/youtrack) est paramétré pour construire automatiquement l'image Docker à partir du repo GitHub [seb-martin/youtrack-dockerized](https://github.com/seb-martin/youtrack-dockerized).
 
 ### Pull du repository
 
 ```
-docker pull sebmartin/youtrack-dockerized
+docker pull sebmartin/youtrack
 ```
 
 ### Exécution du conteneur
 
 ```
-docker run --name="youtrack" -v /path/to/database/directory:/root/teamsysdata -v /path/to/backups/directory:/root/teamsysdata-backup -p 83:80 -d sebmartin/youtrack-dockerized
+docker run --name="youtrack" -v /path/to/database/directory:/root/teamsysdata -v /path/to/backups/directory:/root/teamsysdata-backup -p 83:80 -d sebmartin/youtrack
 ```
 
 Ajuster les paramètres de la commande :
