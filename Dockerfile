@@ -2,7 +2,7 @@ FROM dockerfile/java:oracle-java8
 
 MAINTAINER Sébastien Martin <seb.martin.94@gmail.com>
 
-RUN wget http://download.jetbrains.com/charisma/youtrack-6.0.12124.jar -O youtrack.jar
+RUN wget http://download.jetbrains.com/charisma/youtrack-6.0.12634.jar -O youtrack.jar
 
 EXPOSE 80
 
