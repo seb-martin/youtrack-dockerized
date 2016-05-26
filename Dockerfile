@@ -1,4 +1,4 @@
-FROM dockerfile/java:oracle-java8
+FROM java:8-jre
 
 MAINTAINER Sébastien Martin <seb.martin.94@gmail.com>
 
