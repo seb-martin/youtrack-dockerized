@@ -1,70 +1,106 @@
-# Youtrack Dockerized
+# Supported tags and respectives `Dockerfile` links
 
-Une image docker de l'application web [Youtrack](http://www.jetbrains.com/youtrack) de [JetBrains](http://www.jetbrains.com/).
+- [`latest` (Dockerfile)](https://github.com/seb-martin/youtrack-dockerized/blob/master/Dockerfile)
 
-## Docker Hub Registry
+# Youtrack
 
-Le repo Docker [sebmartin/youtrack](https://registry.hub.docker.com/u/sebmartin/youtrack) est paramétré pour construire automatiquement l'image Docker à partir du repo GitHub [seb-martin/youtrack-dockerized](https://github.com/seb-martin/youtrack-dockerized).
+[Youtrack](https://www.jetbrains.com/youtrack/) is an issue tracker designed for devlopment teams.
 
-### Pull du repository
+![](docs/icon_Youtrack.png)
 
-```
-docker pull sebmartin/youtrack
-```
 
-### Exécution du conteneur
+# How to use this image
 
-```
-docker run --name="youtrack" -v /path/to/database/directory:/root/teamsysdata -v /path/to/backups/directory:/root/teamsysdata-backup -p 83:80 -d sebmartin/youtrack
+```sh
+docker run -p 8080:8080 -d sebmartin/youtrack
 ```
 
-Ajuster les paramètres de la commande :
+Context
 
-* Ajuster `-v /path/to/database/directory:/root/teamsysdata`. Ce paramètre monte le volume `/path/to/database/directory` de la machine hôte sur le volume `/root/teamsysdata` du conteneur docker.
-* Ajuster `-v /path/to/backups/directory:/root/teamsysdata-backup`. Ce paramètre monte le volume `/path/to/backups/directory` de la machine hôte sur le volume `/root/teamsysdata-backup` du conteneur docker.
-* Ajuster `-p 83:80`. Ce paramètre expose le port `80` du conteneur docker sur le port `83` de la machine hôte.
-
-## GitHub
-
-Les sources de l'image sont clonable depuis le repo [seb-martin/youtrack-dockerized](https://github.com/seb-martin/youtrack-dockerized).
-
-### Clone du repository
-
-```
-git clone https://github.com/seb-martin/youtrack-dockerized.git
+```sh
+docker run -p 8080:8080 -d sebmartin/youtrack /youtrack
 ```
 
-### Vagrant VirtualBox ###
+Persistent volumes
 
-```
-> vagrant plugin install vagrant-vbguest
-> vagrant up
-> vagrant ssh
-> cd /vagrant
+```sh
+docker run -v /path/to/folder:/var/lib/youtrack -p 8080:8080 -d sebmartin/youtrack
 ```
 
-### Linux Natif ###
+Data Container
 
-Construire l'image docker
-
-```
-> make build
-```
-
-Exécuter le conteneur docker avec le port par défaut (80)
-
-```
-> make DATA_DIR=/path/to/data_dir BACKUP_DIR=/path/to/backup_dir run
+```sh
+docker create -v /home/youtrack --name youtrack-data sebmartin/youtrack
+docker run --volumes-from youtrack-data --name youtrack-app -p 8080:8080 -d sebmartin/youtrack
 ```
 
-Exécuter le conteneur docker en spécifiant un port alternatif (ici 8080)
+# Passing JVM and Youtrack parameters
+
+Default parameters : `-Xmx1g`, `-XX:MaxMetaspaceSize=250m`, `-Djava.awt.headless=true` `-Djetbrains.youtrack.disableBrowser=true`.
+
+
+Overrides default parameters
+
+```sh
+docker run -p 8080:8080 --env JAVA_OPTS="-Xmx1g -XX:MaxMetaspaceSize=250m -Djava.awt.headless=true -Djetbrains.youtrack.disableBrowser=true" -d sebmartin/youtrack /youtrack
+```
+
+- [JVM parameters](http://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html)
+- [Youtrack Configuration Parameters](https://www.jetbrains.com/help/youtrack/standalone/7.0/YouTrack-Java-Start-Parameters.html)
+
+Mandatory parameters
+
+- `-Xmx1g` : Sets the maximum Java heap size to 1GB.
+- `-XX:MaxMetaspaceSize=250m` : Sets the maximum Metaspace memory to 250MB.
+- `-Djava.awt.headless=true` : Runs Java in Headless Mode.
+
+Not allowed parameters
+
+- `database.location`
+- `database.backup.location`
+- `jetbrains.youtrack.logDir`
+
+# Troubleshooting
+
+## Native random generator does not have enough entropy
+
+Problem
 
 ```
-> make DATA_DIR=/path/to/data_dir BACKUP_DIR=/path/to/backup_dir PORT=8080 run
+YouTrack home folder is [/home/youtrack/.youtrack]
+Verifying memory requirements...
+Checking entropy sources...
+===================================
+Native random generator does not seem to have enough entropy for YouTrack to start.
+You can fix it by switching to PRNG with -Djava.security.egd=/dev/zrandom or by reconfiguring your operation system to provide more random bits.
+Application will now exit
+
 ```
 
-Stopper l'exécution du conteneur docker
+Solution
+
+```sh
+docker run -v /dev/urandom:/dev/random -p 8080:8080 -d sebmartin/youtrack
+```
+
+
+## Not enough disk space left
+
+Problem
 
 ```
-> make stop
+Can't clear work directory [/var/lib/youtrack/.youtrack/work]: /var/lib/youtrack/.youtrack/work does not exist
+YouTrack home folder is [/var/lib/youtrack/.youtrack]
+Verifying memory requirements...
+Checking entropy sources...
+Checking free disk space...
+===================================
+Not enough disk space left for YouTrack to start. Current work folder is /var/lib/youtrack/.youtrack. You can either free at least 300 MB on current partition or override work folder location with -Djetty.home=<work folder path>
+Application will now exit
+```
+
+Solution
+
+```sh
+chown vagrant:vagrant /path/to/directory
 ```

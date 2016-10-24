@@ -1,0 +1,8 @@
+default:
+  build: .
+  environment:
+    JAVA_OPTS: "-Xmx1g -XX:MaxMetaspaceSize=250m -Djava.awt.headless=true -Djetbrains.youtrack.disableBrowser=true"
+  ports:
+    - "8080:8080"
+  volumes:
+    - /var/lib/youtrack
