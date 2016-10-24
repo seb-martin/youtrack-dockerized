@@ -6,7 +6,7 @@
 
 [Youtrack](https://www.jetbrains.com/youtrack/) is an issue tracker designed for devlopment teams.
 
-![](docs/icon_Youtrack.png)
+![](https://raw.githubusercontent.com/seb-martin/youtrack-dockerized/develop/docs/icon_YouTrack.png)
 
 
 # How to use this image
